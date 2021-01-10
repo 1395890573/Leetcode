@@ -1,0 +1,69 @@
+class Solution {
+    public String alienOrder(String[] words) {
+        Map<Character, Integer> indegree = new HashMap<>();
+        Map<Character, List<Character>> graph = new HashMap<>();
+        
+        for(String word : words){
+            for(int i = 0; i < word.length(); i++){
+                indegree.putIfAbsent(word.charAt(i), 0);
+                graph.putIfAbsent(word.charAt(i), new ArrayList<>());
+            }
+        }
+        
+        for(int i = 0; i + 1 < words.length; i++){
+            if(!buildGraph(words[i], words[i + 1], indegree, graph)){
+                return "";
+            }
+        }
+        
+        Queue<Character> queue = new LinkedList<>();
+        for(Character ch : indegree.keySet()){
+            if(indegree.get(ch) == 0){
+                queue.offer(ch);
+            }
+        }
+
+        
+        StringBuilder sb = new StringBuilder();
+        while(!queue.isEmpty()){
+            char ch = queue.poll();
+            sb.append(ch);
+            for(Character next : graph.get(ch)){
+                indegree.put(next, indegree.get(next) - 1);
+                if(indegree.get(next) == 0){
+                    queue.offer(next);
+                }
+            }
+        }
+        
+        for(Character ch : indegree.keySet()){
+            if(indegree.get(ch) != 0){
+                return "";
+            }
+        }
+        
+        return sb.toString();   
+    }
+    
+    private boolean buildGraph(String word1, String word2, Map<Character, Integer> indegree, Map<Character, List<Character>> graph){
+       int i = 0;
+       for(; i < word1.length() && i < word2.length(); i++){
+           char c1 = word1.charAt(i);
+           char c2 = word2.charAt(i);
+           if(c1 != c2){
+               indegree.put(c2, indegree.getOrDefault(c2, 0) + 1);
+               graph.putIfAbsent(c1, new ArrayList<>());
+               graph.get(c1).add(c2);
+               break;
+           } 
+       }
+        if(i == word1.length() || i == word2.length()){
+            if(word1.length() > word2.length()){
+                return false;
+            }
+        }
+        
+        return true;
+        
+    }
+}
