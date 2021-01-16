@@ -1,0 +1,41 @@
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer, Map<Integer, Integer>> graph = new HashMap<>();
+        for(int i = 0; i < n; i++){
+            graph.put(i, new HashMap<>());
+        }
+        buildGraph(flights, graph);
+        // [node, distance, numOfStops]
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> (a[1] - b[1]));
+        pq.offer(new int[]{src, 0, k + 1});
+        
+        while(!pq.isEmpty()){
+            int[] cur = pq.poll();
+            int city = cur[0];
+            int price = cur[1];
+            int numOfStops = cur[2];
+            if(city == dst){
+                return price;
+            }
+            if(numOfStops <= 0){
+                continue;
+            }
+
+            for(int next : graph.get(city).keySet()){
+                pq.offer(new int[] {next, price + graph.get(city).get(next), numOfStops - 1});
+            }
+        }
+        
+        return -1;
+        
+        
+
+    }
+    
+    private void buildGraph(int[][] flights, Map<Integer, Map<Integer, Integer>> graph){
+        for(int[] flight : flights){
+            graph.putIfAbsent(flight[0], new HashMap<Integer, Integer>());
+            graph.get(flight[0]).put(flight[1], flight[2]);
+        }
+    }
+}
