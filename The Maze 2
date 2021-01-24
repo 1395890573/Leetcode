@@ -1,0 +1,51 @@
+class Solution {
+    class point{
+        int x;
+        int y;
+        int dis;
+        public point(int x, int y, int dis){
+            this.x = x;
+            this.y = y;
+            this.dis = dis;
+        }
+    }
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        int[][] move = {{1,0},{-1,0},{0,1},{0,-1}};
+        int[][] dis = new int[maze.length][maze[0].length];
+        for(int i = 0; i < maze.length; i++){
+            for(int j = 0; j < maze[0].length; j++){
+                dis[i][j] = Integer.MAX_VALUE;
+            }
+        }
+      
+        PriorityQueue<point> pq = new PriorityQueue<>((o1,o2)->o1.dis-o2.dis); 
+        point firstp = new point(start[0], start[1], 0);
+        pq.offer(firstp);
+        
+        while(!pq.isEmpty()){
+             point p = pq.poll();
+            
+             if(dis[p.x][p.y] <= p.dis){
+                continue;
+             }
+             dis[p.x][p.y] = p.dis;
+             for(int i = 0; i < 4; i++){
+                 int x = p.x; int y = p.y; int d = 0;
+                while(x >= 0 && y >= 0 && x < maze.length && y < maze[0].length && maze[x][y] == 0){
+                    x += move[i][0];
+                    y += move[i][1];
+                    d++;
+                }
+                x -= move[i][0];
+                y -= move[i][1];
+                d--;
+                pq.offer(new point(x,y,p.dis + d));
+             }
+        }
+        
+        return dis[destination[0]][destination[1]] == Integer.MAX_VALUE ? -1: dis[destination[0]][destination[1]];
+        
+       
+        
+    }
+}
