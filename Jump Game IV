@@ -1,0 +1,56 @@
+class Solution {
+    public int minJumps(int[] arr) {
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for(int i = 0; i < arr.length; i++){
+            map.putIfAbsent(arr[i], new HashSet<>());
+            map.get(arr[i]).add(i);
+        }
+        
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> seen = new HashSet<>();
+        int step = 0;
+        queue.offer(0);
+    
+        
+        while(!queue.isEmpty()){
+           int size = queue.size();
+            for(int i = 0; i < size; i++){
+                int cur = queue.poll();
+                   // System.out.println(cur + " " + step);
+                if(cur == arr.length - 1){
+                    return step;
+                }
+                
+
+                
+                if(cur - 1 >= 0 && !seen.contains(cur - 1)){
+                    queue.offer(cur - 1);
+                    seen.add(cur - 1);
+                }
+            
+                if(cur + 1 < arr.length && !seen.contains(cur + 1)){
+                    queue.offer(cur + 1);
+                    seen.add(cur + 1);
+                }
+            
+              
+                for(Integer next : map.get(arr[cur])){
+                    if(seen.contains(next)){
+                        continue;
+                    }
+                    
+                    queue.offer(next);
+                    seen.add(next);
+                }
+                
+                map.get(arr[cur]).clear();
+            }
+            step++;
+        }
+        
+        // System.out.println(seen);
+        
+        return step;
+        
+    }
+}
