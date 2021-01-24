@@ -1,0 +1,60 @@
+class Solution {
+    public int openLock(String[] deadends, String target) {
+        Set<String> deadEnds = new HashSet<>();
+        for(String str : deadends){
+            deadEnds.add(str);
+            if(str.equals("0000") || str.equals(target)){
+                return -1;
+            }
+        }
+        Queue<String> queue = new LinkedList<>();
+        Set<String> seen = new HashSet<>();
+        queue.offer("0000");
+        seen.add("0000");
+        int step = 0;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; i++){
+                String curStr = queue.poll();
+                if(target.equals(curStr)){
+                    return step;
+                }
+                List<String> children = generateSuccessors(curStr);
+                for(String str : children){
+                    if(seen.contains(str) || deadEnds.contains(str)){
+                        continue;
+                    }
+                    seen.add(str);
+                    queue.offer(str);
+                }
+            }
+            step++;
+        }
+        
+        return -1;
+        
+        
+    }
+    
+    private List<String> generateSuccessors(String s){
+        char[] charArr = s.toCharArray();
+        List<String> resList = new ArrayList<>();
+        for(int i = 0; i < charArr.length; i++){
+            char num = charArr[i];
+            
+            char nextNum = (char) (num + 1);
+            if(nextNum > '9'){nextNum = '0';}
+            charArr[i] = nextNum;
+            resList.add(String.valueOf(charArr));
+            
+            char prevNum =  (char) (num - 1);
+            if(prevNum < '0'){prevNum = '9';}
+            charArr[i] = prevNum;
+            resList.add(String.valueOf(charArr));
+            
+            charArr[i] = num;
+        }
+        
+        return resList;
+    }
+}
