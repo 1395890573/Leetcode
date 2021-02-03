@@ -1,0 +1,42 @@
+class Solution {
+    int[][] dirs = new int[][] {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    public int minCost(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        Queue<State> pq = new PriorityQueue<>((a, b) -> (a.cost - b.cost));
+        pq.offer(new State(0, 0 ,0));
+        boolean[][] visited = new boolean[m][n];
+        
+        while(!pq.isEmpty()){
+            State curState = pq.poll();
+            visited[curState.x][curState.y] = true;
+            if(curState.x == m - 1 && curState.y == n - 1){
+                return curState.cost;
+            }
+            for(int i = 1; i <= 4; i++){
+                int[] dir = dirs[i - 1];
+                int nextx = curState.x + dir[0];
+                int nexty = curState.y + dir[1];
+                int cost = curState.cost;
+                cost += i == grid[curState.x][curState.y] ? 0 : 1;
+                if(nextx < 0 || nexty < 0 || nextx >= m || nexty >= n || visited[nextx][nexty]){
+                    continue;
+                }
+                pq.offer(new State(nextx, nexty, cost));
+            }
+        }
+        
+        return -1;
+    }
+    
+    class State{
+        int x;
+        int y;
+        int cost;
+        State(int x, int y, int cost){
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
+        }
+    }
+}
