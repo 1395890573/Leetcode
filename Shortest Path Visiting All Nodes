@@ -1,0 +1,47 @@
+class Solution {
+    public int shortestPathLength(int[][] graph) {
+        int n = graph.length;
+        int[][] distance = new int[1<<n][n];
+        Queue<State> queue = new LinkedList<>();
+        for(int[] row : distance){
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+        for(int i = 0; i < n; i++){
+            queue.offer(new State(1 << i, i));
+            distance[1 << i][i] = 0;
+        }
+        int goal = (1 << n) - 1 ;
+      
+        
+        while(!queue.isEmpty()){
+            State curState = queue.poll();
+            int oldDis = distance[curState.cover][curState.head];
+            // System.out.println("oldDis" + oldDis);
+            if(curState.cover == goal){
+                return oldDis;
+            }
+            for(Integer child : graph[curState.head]){
+                int dis = oldDis + 1;
+                int newCover = (curState.cover | (1 << child));
+                // System.out.println("head" + curState.head + " child " + child);
+                
+                if(dis < distance[newCover][child]){
+                    distance[newCover][child] = dis;
+                    queue.offer(new State(newCover, child));
+                }
+            }
+        }
+        return -1;
+    }
+    
+    class State{
+        int cover;
+        int head;
+        
+        State(int cover, int head){
+            this.cover = cover;
+            this.head = head;
+        }
+    }
+    
+}
