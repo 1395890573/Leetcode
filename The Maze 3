@@ -1,0 +1,72 @@
+class Solution {
+    int[][] dirs = new int[][] {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    String[] directions = new String[] {"r", "l", "d", "u"};
+    public String findShortestWay(int[][] maze, int[] ball, int[] hole) {
+        int m = maze.length;
+        int n = maze[0].length;
+        Point[][] visited = new Point[m][n];
+        for(int i = 0; i < visited.length; i++){
+            for(int j = 0; j < visited[0].length; j++){
+                visited[i][j] = new Point(i, j);
+            }
+        }
+        
+        PriorityQueue<Point> pq = new PriorityQueue<>(); 
+        pq.offer(new Point(ball[0], ball[1], 0, "", ""));
+        
+        while(!pq.isEmpty()){
+            Point curPoint = pq.poll();
+           if (visited[curPoint.x][curPoint.y].compareTo(curPoint) <= 0) continue;
+            visited[curPoint.x][curPoint.y] = curPoint;
+
+            for(int j = 0; j < dirs.length; j++){
+                int[] dir = dirs[j];
+                String direction = directions[j];
+                int x = curPoint.x;
+                int y = curPoint.y;
+                int curDis = curPoint.dis;
+                while(x >= 0 && y >= 0 && x < m && y < n && maze[x][y] == 0 && !(x == hole[0] && y == hole[1])){
+                    x += dir[0];
+                    y += dir[1];
+                    curDis++;
+                }
+                if(!(x == hole[0] && y == hole[1])){
+                     x -= dir[0];
+                     y -= dir[1];
+                     curDis--;
+                }
+               
+         
+                pq.offer(new Point(x, y, curDis, curPoint.path + direction, curPoint.cPath + " x:" + x + ",y:" + y));
+            }
+        }
+        
+        return visited[hole[0]][hole[1]].dis == Integer.MAX_VALUE ? "impossible" : visited[hole[0]][hole[1]].path;  
+    }
+    
+    class Point implements Comparable<Point>{
+        int x;
+        int y;
+        int dis;
+        String path = "";
+        String cPath = "";
+    
+        public Point(int x, int y){
+            this.x = x;
+            this.y = y;
+            this.dis = Integer.MAX_VALUE;
+        }
+         public Point(int x, int y, int dis, String dir, String path2){
+            this.x = x;
+            this.y = y;
+            this.dis = dis;
+             this.path = dir;
+             this.cPath = this.cPath + path2;
+        }   
+        
+        @Override
+        public int compareTo(Point p) {
+            return this.dis == p.dis ? this.path.compareTo(p.path) : this.dis - p.dis;
+        }
+    }
+}
