@@ -1,0 +1,87 @@
+class Solution {
+    int[][] dirs = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    //  @.a.#
+    //  ###.#
+    //  b.A.B
+    public int shortestPathAllKeys(String[] grid) {
+        int num = 0;
+        int[] start = new int[] {-1, -1};
+        int m = grid.length;
+        int n = grid[0].length();
+        Set<String> visited = new HashSet<>();
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                char c = grid[i].charAt(j);
+                if(c == '@'){
+                    start[0] = i;
+                    start[1] = j;
+                }
+                
+                if(c >= 'a' && c <= 'z'){
+                    num = Math.max(num, 1 + (c - 'a'));
+                }
+            }
+        }
+        visited.add(start[0] + " " + start[1] + " " + 0);
+        int goal = (1 << num) - 1;
+        // System.out.println(num + " " +Integer.toBinaryString(goal));
+    
+        Queue<State> queue = new LinkedList<>();
+        queue.offer(new State(start[0], start[1], 0));
+        int dis = 0;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; i++){
+                State curState = queue.poll();
+                // System.out.println(curState.x + " " + curState.y + " " + curState.key);
+              
+                if(curState.key == goal){
+                    return dis;
+                }
+                for(int[] dir : dirs){
+                    int nextx = dir[0] + curState.x;
+                    int nexty = dir[1] + curState.y;
+                    if(nextx < 0 || nexty < 0 || nextx >= m || nexty >= n || grid[nextx].charAt(nexty) == '#'){
+                        continue;
+                    }
+                    
+                    char nextCh = grid[nextx].charAt(nexty);
+                    if(nextCh <= 'Z' && nextCh >= 'A' && ((curState.key >> (nextCh - 'A')) & 1) == 0){
+                        continue;
+                    }
+                    
+                    int newKey = curState.key;
+                    if(nextCh <= 'z' && nextCh >= 'a'){
+                        newKey = newKey | 1 << (nextCh - 'a');
+                    }
+                    
+                    
+                    State nextState = new State(nextx, nexty, newKey);
+                    // System.out.println(nextState.x + " " + nextState.y + " " + curState.key + " " + nextState.key);
+                    
+                    if(!visited.contains(nextx + " " + nexty + " " + nextState.key)){
+                        queue.offer(nextState);
+                        visited.add(nextx + " " + nexty + " " + nextState.key);    
+                    }
+                   
+                }
+            }
+            dis++;
+        }
+        
+        return -1;
+        
+        
+    }
+    
+    class State{
+        int x;
+        int y;
+        int key;
+        State(int x, int y, int key){
+            this.x = x;
+            this.y = y;
+            this.key = key;
+        }
+    }
+}
