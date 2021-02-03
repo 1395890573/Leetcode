@@ -1,0 +1,89 @@
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        Set<String> wordSet = new HashSet<>(wordList);
+        if(!wordSet.contains(endWord)){
+            return new ArrayList<>();
+        }
+        if(wordSet.contains(beginWord)){
+            wordSet.remove(beginWord);
+        }
+        
+        Map<String, Set<String>> graph = new HashMap<>();
+        int minStep = bfs(beginWord, endWord, new HashSet<>(wordSet), graph);
+        // System.out.println(graph);
+        List<List<String>> resList = new ArrayList<>();
+        List<String> path = new ArrayList<>();
+        path.add(beginWord);
+        dfs(resList, graph, 1, beginWord, endWord, minStep, path);
+        return resList;
+        
+    }
+    
+    private void dfs(List<List<String>> resList, Map<String, Set<String>> graph, int step, String word, String endWord, int minStep, List<String> path){
+        if(word.equals(endWord) && step == minStep){
+            resList.add(new ArrayList<>(path));
+            return;
+        }
+        
+        if(graph.get(word) == null || step > minStep){
+            return;
+        }
+        for(String str : graph.get(word)){
+            path.add(str);
+            dfs(resList, graph, step + 1, str, endWord, minStep, path);
+            path.remove(path.size() - 1);
+            
+        }
+    }
+    
+    private int bfs(String beginWord, String endWord, Set<String> wordSet, Map<String, Set<String>> graph){
+        if(!wordSet.contains(endWord)){
+            return 0;
+        }
+        if(wordSet.contains(beginWord)){
+            wordSet.remove(beginWord);
+        }
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(beginWord);
+        int step = 0;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; i++){
+                String str = queue.poll();
+                // System.out.println(str);
+                if(str.equals(endWord)){
+                    return step + 1;
+                }
+                Set<String> children = generateChildren(str, wordSet);
+                graph.putIfAbsent(str, new HashSet<>());
+                 // System.out.println("set " + children);
+                for(String child : children){
+                    // Once we generate the new word, we don't want other words generate again, because we want to find the shortest paht.
+                    graph.get(str).add(child);
+                    queue.offer(child);
+                }
+            }
+             wordSet.removeAll(queue);
+            step++;
+        }
+        return step;
+    }
+    
+    private Set<String> generateChildren(String s, Set<String> set){
+        
+        char[] arr = s.toCharArray();
+        Set<String> resSet = new HashSet<>();
+        for(int i = 0; i < s.length(); i++){
+            for(int j = 0; j < 26; j++){
+                arr[i] = (char)('a' + j);
+                String newStr = String.valueOf(arr);
+                if(set.contains(newStr) && !newStr.equals(s)){
+                    resSet.add(newStr);
+                }
+            }
+            arr[i] = s.charAt(i);
+        }
+        
+        return resSet;
+    }
+}
