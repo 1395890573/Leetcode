@@ -1,0 +1,67 @@
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        // Assumptions:
+        // The wordList contains beginWord and endWord?
+        // The wordList contains duplicated words
+        // Can we always ensure we that there is a path to the endWord?
+        
+        // Algorithm:
+        // Graph problem : Each string is a node and 
+        // BFS
+        
+        // Time complexity:
+        // 
+        
+        if(wordList == null || wordList.size() == 0){
+            return 0;
+        }
+        
+        Queue<String> queue = new LinkedList<>();
+        Set<String> wordDict = new HashSet<>(wordList);
+    
+        queue.offer(beginWord);
+        int step = 0;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; i++){
+                String word = queue.poll();
+                if(word.equals(endWord)){
+                    return step + 1;
+                }
+                
+                Set<String> children = transform(word, wordDict);
+                for(String child : children){
+                    queue.offer(child);
+                    wordDict.remove(child);
+                }
+            }
+            step++; 
+        }
+        
+        return 0;
+    }
+    
+    private Set<String> transform(String s, Set<String> wordDict){
+        Set<String> set = new HashSet<>();
+        char[] arr = s.toCharArray();
+        for(int i = 0; i < s.length(); i++){
+            char c = arr[i];
+            for(int j = 0; j < 26; j++){
+                arr[i] = (char)('a' + j);
+                if(c == arr[i]){
+                    continue;
+                }
+                
+                String child  = String.valueOf(arr);
+                if(wordDict.contains(child)){
+                    set.add(child);
+                }
+            } 
+            
+            // Careful! change back
+            arr[i] = c;
+        }
+
+        return set;
+    }
+}
