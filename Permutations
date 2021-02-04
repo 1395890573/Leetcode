@@ -1,0 +1,25 @@
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<Integer> path = new ArrayList<>();
+        for(Integer num : nums){
+            path.add(num);
+        }
+        List<List<Integer>> resList = new ArrayList<>();
+        permuteDFS(resList, path, 0);
+        return resList;
+        
+    }
+    
+    private void permuteDFS(List<List<Integer>> resList, List<Integer> path, int index){
+        if(index == path.size()){
+            resList.add(new ArrayList<>(path));
+            return;
+        }
+        
+        for(int i = index; i < path.size(); i++){
+            Collections.swap(path, index, i);
+            permuteDFS(resList, path, index + 1);
+            Collections.swap(path, index, i);
+        }
+    }
+}
