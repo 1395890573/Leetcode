@@ -1,0 +1,44 @@
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        // Diagnal: (0,1) (1,2) y1 - x1 = y2 - x2
+        // Anti Diagnal: x1 + y1 = x2 + y2
+        char[][] board = new char[n][n];
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                board[i][j] = '.';
+            }
+        }
+        Set<Integer> col = new HashSet<>();
+        Set<Integer> diagonal = new HashSet<>();
+        Set<Integer> antiDiagonal = new HashSet<>();
+        List<List<String>> res = new ArrayList<>();
+        dfs(0, n, col, diagonal, antiDiagonal, board, res);
+        return res;
+    }
+    
+    private void dfs(int row, int n, Set<Integer> col, Set<Integer> diagonal, Set<Integer> antiDiagonal, char[][] board, List<List<String>> res){
+        if(row == n){
+            List<String> boardList = new ArrayList<>();
+            for(char[] line : board){
+                String lineStr = String.valueOf(line);
+                boardList.add(lineStr);
+            }
+            res.add(boardList);
+            return;
+        }
+        
+        for(int i = 0; i < n; i++){
+            if(!col.contains(i) && ! diagonal.contains(row - i) && !antiDiagonal.contains(row + i)){
+                col.add(i);
+                diagonal.add(row - i);
+                antiDiagonal.add(row + i);
+                board[row][i] = 'Q';
+                dfs(row + 1, n, col, diagonal, antiDiagonal, board, res);
+                board[row][i] = '.';
+                col.remove(i);
+                diagonal.remove(row - i);
+                antiDiagonal.remove(row + i);  
+            }
+        }
+    }
+}
