@@ -1,0 +1,40 @@
+class Solution {
+    public int totalNQueens(int n) {
+        
+        char[][] board = new char[n][n];
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                board[i][j] = '.';
+            }
+        }
+        Set<Integer> col = new HashSet<>();
+        Set<Integer> diagonal = new HashSet<>();
+        Set<Integer> antiDiagonal = new HashSet<>();
+        List<List<String>> res = new ArrayList<>();
+        
+        return dfs(0, n, col, diagonal, antiDiagonal, board, res);
+    }
+    
+    private int dfs(int row, int n, Set<Integer> col, Set<Integer> diagonal, Set<Integer> antiDiagonal, char[][] board, List<List<String>> res){
+        if(row == n){
+            return 1;
+        }
+        
+        int num = 0;
+        for(int i = 0; i < n; i++){
+            if(!col.contains(i) && ! diagonal.contains(row - i) && !antiDiagonal.contains(row + i)){
+                col.add(i);
+                diagonal.add(row - i);
+                antiDiagonal.add(row + i);
+                board[row][i] = 'Q';
+                num += dfs(row + 1, n, col, diagonal, antiDiagonal, board, res);
+                board[row][i] = '.';
+                col.remove(i);
+                diagonal.remove(row - i);
+                antiDiagonal.remove(row + i);  
+            }
+        }
+        
+        return num;
+    }
+}
