@@ -1,0 +1,35 @@
+class Solution {
+    public int countArrangement(int n) {
+        
+        int[] arr = new int[n + 1];
+        for(int i = 1; i <= n; i++){
+            arr[i] = i;
+        }
+        
+        return dfs(arr, 1);        
+    }
+    
+    private int dfs(int[] arr, int index){
+        if(index == arr.length){
+            return 1;
+        }
+        int num = 0;
+        for(int i = index; i < arr.length; i++){
+            int num1 = arr[index];
+            int num2 = arr[i];
+            if((num2 % index == 0 || index % num2 == 0)){
+                swap(arr, i, index);
+                num += dfs(arr, index + 1);
+                swap(arr, i, index);
+            }
+        }
+        
+        return num;
+    }
+    
+    private void swap(int[] arr, int i, int j){
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
