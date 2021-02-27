@@ -1,0 +1,39 @@
+class Solution {
+    public List<List<String>> partition(String s) {
+        List<List<String>> resList = new ArrayList<>();
+        dfs(s, new ArrayList<>(), resList);
+        return resList;
+        
+    }
+    
+    private void dfs(String s, List<String> list, List<List<String>> resList){
+        if(s.length() == 0){
+            resList.add(new ArrayList<>(list));
+            return;
+        }
+        
+        for(int i = 0; i < s.length(); i++){
+            String str = s.substring(0, i + 1);
+            if(isPalin(str)){
+                list.add(str);
+                dfs(s.substring(i + 1), list, resList);
+                list.remove(list.size() - 1);
+            }
+        }
+    }
+    
+    private boolean isPalin(String s){
+        int l = 0;
+        int r = s.length() - 1;
+        while(l < r){
+            if(s.charAt(l) != s.charAt(r)){
+                return false;
+            }else{
+                l++;
+                r--;
+            }
+        }
+        
+        return true;
+    }
+}
