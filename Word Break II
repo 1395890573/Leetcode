@@ -1,0 +1,39 @@
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        Set<String> word = new HashSet<>(wordDict);
+        return dfs(s, word, 0, new HashMap<>());
+        
+        
+        
+    }
+    
+    private List<String> dfs(String s, Set<String> wordDict, int index, Map<Integer, List<String>> map){
+        if(index == s.length()){
+            List<String> list = new ArrayList<>();
+            list.add("");
+            return list;
+        }
+        
+        if(map.containsKey(index)){
+            return map.get(index);
+        }
+        
+        List<String> curList = new ArrayList<>();
+        for(int i = index; i < s.length(); i++){
+            if(wordDict.contains(s.substring(index, i + 1))){
+                List<String> subList = dfs(s, wordDict, i + 1, map);
+                for(String str : subList){
+                    if(str.length() != 0){
+                        curList.add(s.substring(index, i + 1)+ " " + str);
+                    }else{
+                        curList.add(s.substring(index, i + 1));
+                    }
+                }
+            }
+        }
+        
+        map.put(index, curList);
+        
+        return curList;
+    }
+}
