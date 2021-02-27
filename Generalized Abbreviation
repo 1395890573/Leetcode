@@ -1,0 +1,22 @@
+class Solution {
+    public List<String> generateAbbreviations(String word) {
+        List<String> resList = new ArrayList<>();
+        dfs(word, 0, 0, resList, "");
+        return resList;
+        
+    }
+    
+    private void dfs(String word, int index, int cnt, List<String> resList, String path){
+        if(index == word.length()){
+            if(cnt == 0){
+                resList.add(path);
+            }else{
+                resList.add(path+cnt);
+            }
+            return;
+        }
+        
+        dfs(word, index + 1, cnt + 1, resList, path);
+        dfs(word, index + 1, 0, resList, path + (cnt == 0 ? "" : cnt) + word.charAt(index)); 
+    } 
+}
