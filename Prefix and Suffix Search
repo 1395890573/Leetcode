@@ -1,0 +1,67 @@
+class WordFilter {
+    
+    TrieNode root;
+    private static final char CONST = (char)('z' + 1);
+
+    public WordFilter(String[] words) {
+        root = new TrieNode();
+        int index = 0;
+        for(String word : words){
+            StringBuilder sb = new StringBuilder();
+            for(int i = word.length() - 1; i >= 0; i--){
+                // Bug
+                sb.insert(0, word.charAt(i));
+                String str = sb.toString() + CONST + word;
+                insert(str, index);
+            }
+            index++;
+        }
+        
+    }
+    
+    public void insert(String s, int index){
+        TrieNode cur = root;
+        boolean isWord = false;
+        for(int i = 0; i < s.length(); i++){
+            if(cur.children[s.charAt(i) - 'a'] == null){
+                cur.children[s.charAt(i) - 'a'] = new TrieNode();
+            }
+            cur =  cur.children[s.charAt(i) - 'a'];
+            if(s.charAt(i) == CONST){
+                isWord = true;
+            }
+            
+            if(isWord){
+                cur.index = index;
+            }
+        }
+    }
+    
+    public int f(String prefix, String suffix) {
+        String searchStr = suffix + CONST + prefix;
+        TrieNode cur = root;
+        for(int i = 0; i < searchStr.length(); i++){
+            cur = cur.children[searchStr.charAt(i) - 'a'];
+            if(cur == null){
+                return -1;
+            }
+        }
+        return cur.index;
+        
+    }
+
+    class TrieNode{
+        TrieNode[] children;
+        int index;
+        public TrieNode(){
+            children = new TrieNode[27];
+            index = -1;
+        }
+    }
+}
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
