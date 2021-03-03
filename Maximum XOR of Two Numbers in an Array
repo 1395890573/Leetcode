@@ -1,0 +1,27 @@
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        // a ^ b = c
+        // a ^ c = b
+        int mask = 0;
+        int max = 0;
+        for(int i = 31; i >= 0; i--){
+            mask |= 1 << i;
+            Set<Integer> set = new HashSet<>();
+            for(Integer num : nums){
+                set.add(num & mask);
+            }
+            // System.out.println(set);
+            int tmp = max | (1 << i);
+            for(Integer prefix : set){
+                int goal = prefix ^ tmp;
+                if(set.contains(goal)){
+                    max = tmp;
+                    break;
+                }
+            }
+        }
+        
+        return max;
+        
+    }
+}
